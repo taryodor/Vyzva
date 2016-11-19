@@ -2,11 +2,8 @@
 import collections, datetime, time
 #Toto importuji proto, abych mohl pouzit serazeny slovnik
 #Ten pouzivam jen pro muj komfort :-)
-seznam_vstupu = []
-#Sem ukladam radky vstupu do serazenych slovniku
-seznam_pomocny = []
-slovnik_pomocny = collections.OrderedDict()
-#Pomocnici k peknemu rozsekani a rozcleneni jednotlivych radku
+seznam_vstupu = []#Sem ukladam radky vstupu do serazenych slovniku
+slovnik_pomocny = collections.OrderedDict()#Pomocnici k peknemu rozsekani a rozcleneni jednotlivych radku
 
 seznam_kombinaci = []
 #sem chci ukladat vafiltrovane kombinace
@@ -30,6 +27,7 @@ def sedi_destinace(d1,d2):
     return d1 == d2
 
 def nacteni_vstupu(zdroj_vstupu):
+    seznam_pomocny = []
     with open(zdroj_vstupu) as soubor:
         #Otevru soubor po radkach
         i = 0
@@ -59,79 +57,40 @@ def parovani_letu(seznam_letu, radek_porovnavaneho_letu):
         seznam_kombinaci[len(seznam_kombinaci)-1].append(radek_porovnavaneho_letu)
         seznam_kombinaci[len(seznam_kombinaci)-1].append(j)
 
-"""
-Cela tat ofunkce je spatne...
-def retezeni_letu(seznam_dvojic, index_testovane_dvojice):
-    for bb in range(len(seznam_dvojic)):
-        if index_testovane_dvojice == bb:
-            continue
-        #print("testuji ", seznam_dvojic[index_testovane_dvojice][-1], seznam_dvojic[bb][0])
-        #print("index testovanych", index_testovane_dvojice, bb)
-        if seznam_dvojic[index_testovane_dvojice][-1] == seznam_dvojic[bb][0]:
-            seznam_dvojic.append(list.copy(seznam_dvojic[index_testovane_dvojice]))
-            seznam_dvojic[index_testovane_dvojice].append(seznam_dvojic[bb][-1])
-    return seznam_dvojic
-"""
+def retezeni_letu(seznam_dvojic):
+    pojistka = []
+    pomocny_seznam = []
+    for l in range(len(seznam_dvojic)):
+        for m in range(len(seznam_dvojic)):
+            if l == m:
+                continue
+            for u in range(len(seznam_dvojic[m])):
+                if seznam_dvojic[l][-1] == seznam_dvojic[m][u] and u < len(seznam_dvojic[m])-1:
+                    pojistka.append(list.copy(seznam_dvojic[l]))
+                    pojistka[-1].append(seznam_dvojic[m][u+1])#Sem a na odpovidajici misto dole staci pridat cyklus, ktery pridava vsechny nasledujici cleny, ale uz jdu spat. Doubrou
+                    if pojistka[-1] in seznam_dvojic:
+                        continue
+                    pomocny_seznam.append(list.copy(seznam_dvojic[l]))
+                    pomocny_seznam[-1].append(seznam_dvojic[m][u+1])
+                    return list.copy(pomocny_seznam[-1])
 
+def rozkodovani_retezce(seznam_letu, kombinace_k_rozkodovani):
+    for i in range(len(kombinace_k_rozkodovani)):
+        print(seznam_vstupu[i]["destination"])
 
 nacteni_vstupu("vstup.txt")#Nacteni vstupu z daneho zdrojaku, pozdeji to udelam na vstup ze soubor udle zadani uzivatele
 for i in range(len(seznam_vstupu)):
     parovani_letu(seznam_vstupu, i)
 
-for k in range(len(seznam_kombinaci)):
-    print(k, seznam_kombinaci[k])
 print()
 
-pojistka = []
+for r in range(len(seznam_kombinaci)):
+    seznam_kombinaci.append(retezeni_letu(seznam_kombinaci))
 
-for l in range(len(seznam_kombinaci)):
-    for m in range(len(seznam_kombinaci)):
-        if l == m:
-            continue
-        if seznam_kombinaci[l][-1] == seznam_kombinaci[m][0]:
-            pojistka.append(list.copy(seznam_kombinaci[l]))
-            pojistka[-1].append(seznam_kombinaci[m][-1])#Sem a na odpovidajici misto dole staci pridat cyklus, ktery pridava vsechny nasledujici cleny, ale uz jdu spat. Doubrou    
-            if pojistka[-1] in seznam_kombinaci:
-                continue
-            seznam_kombinaci.append(list.copy(seznam_kombinaci[l]))
-            seznam_kombinaci[-1].append(seznam_kombinaci[m][-1])
 l = 0
 m = 0
-"""
-for l in range(len(seznam_kombinaci)):
-    for m in range(len(seznam_kombinaci)):
-        #print(len(seznam_kombinaci))
-        if l == m:
-            continue
-        if seznam_kombinaci[l][-1] == seznam_kombinaci[m][0]:
-            pojistka.append(list.copy(seznam_kombinaci[l]))
-            pojistka[-1].append(seznam_kombinaci[m][-1])
-            if pojistka[-1] in seznam_kombinaci:
-                continue
-            seznam_kombinaci.append(list.copy(seznam_kombinaci[l]))
-            seznam_kombinaci[-1].append(seznam_kombinaci[m][-1])
-            print("porovnavam ", seznam_kombinaci[l], " s ", seznam_kombinaci[m], end=" ")
-            print("spojil jsem..." , l, m, end=" ")
-            print("vytvoril jsem...", seznam_kombinaci[-1], end=" ")
-
-for l in range(len(seznam_kombinaci)):
-    for m in range(len(seznam_kombinaci)):
-        #print(len(seznam_kombinaci))
-        if l == m:
-            continue
-        for q in range(1,len(seznam_kombinaci[m])):
-            if seznam_kombinaci[l][-1] == seznam_kombinaci[m][q] and (len(seznam_kombinaci[m])-1)>q:
-                pojistka.append(list.copy(seznam_kombinaci[l]))
-                pojistka[-1].append(seznam_kombinaci[m][q+1])
-                if pojistka[-1] in seznam_kombinaci:
-                    continue
-                seznam_kombinaci.append(list.copy(seznam_kombinaci[l]))
-                seznam_kombinaci[-1].append(seznam_kombinaci[m][q+1])
-                print("porovnavam ", seznam_kombinaci[l], " s ", seznam_kombinaci[m], end=" ")
-                print("spojil jsem..." , l, m, end=" ")
-                print("vytvoril jsem...", seznam_kombinaci[-1])
-"""
-
+seznam_kombinaci.append(retezeni_letu(seznam_kombinaci))
 for k in range(len(seznam_kombinaci)):
     print(k, seznam_kombinaci[k])
-print()
+
+rozkodovani_retezce(seznam_vstupu, seznam_kombinaci[-1])

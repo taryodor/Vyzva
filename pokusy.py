@@ -12,6 +12,18 @@ def sedi_cas(t1, t2):
     if cas1 >= cas2 and rozdil_casu <= dovolena_odchylka:
         return True
 
+for l in range(len(seznam_kombinaci)):
+    for m in range(len(seznam_kombinaci)):
+        if l == m:
+            continue
+        for u in range(len(seznam_kombinaci[m])):
+            if seznam_kombinaci[l][-1] == seznam_kombinaci[m][u] and u < len(seznam_kombinaci[m])-1:
+                pojistka.append(list.copy(seznam_kombinaci[l]))
+                pojistka[-1].append(seznam_kombinaci[m][u+1])#Sem a na odpovidajici misto dole staci pridat cyklus, ktery pridava vsechny nasledujici cleny, ale uz jdu spat. Doubrou
+                if pojistka[-1] in seznam_kombinaci:
+                    continue
+                seznam_kombinaci.append(list.copy(seznam_kombinaci[l]))
+                seznam_kombinaci[-1].append(seznam_kombinaci[m][u+1])
 
 
 print(sedi_cas(casik1, casik2))
@@ -30,11 +42,14 @@ def sedi_pocet_baglu(pocet_bagu1, pocet_bagu2):
     return pocet_bagu1 <= pocet_bagu2
 """
 
-pole = []
-pole.append([])
-pole[0].append([1])
-pole[0].append([2])
-print(pole[0])
+for i in range(10):
+    print(i)
+
+print()
+print(i)
+
+for i in range(10):
+    print(i)
 
 
 
